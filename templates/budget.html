@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}
+Budget Breakdown | AI Travel Planner
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/budget.css') }}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<main class="budget-page">
+
+    <div class="budget-container">
+
+
+        <div class="budget-heading">
+
+            <p class="eyebrow">
+                TRIP BUDGET
+            </p>
+
+            <h1>
+                Budget Breakdown
+            </h1>
+
+            <p>
+                Estimated spending for your trip to
+                <strong>{{ trip.destination }}</strong>.
+            </p>
+
+        </div>
+
+
+
+        <section class="budget-top">
+
+
+            <div class="budget-total-card">
+
+                <span>
+                    TOTAL ESTIMATED COST
+                </span>
+
+                <h2>
+                    ₹{{ "{:,.0f}".format(
+                        budget.get('total', 0)
+                    ) }}
+                </h2>
+
+                <p>
+                    Remaining:
+                    ₹{{ "{:,.0f}".format(
+                        budget.get('remaining', 0)
+                    ) }}
+                </p>
+
+            </div>
+
+
+            <div class="budget-limit-card">
+
+                <span>
+                    YOUR TOTAL BUDGET
+                </span>
+
+                <h2>
+                    ₹{{ "{:,.0f}".format(
+                        trip.budget or 0
+                    ) }}
+                </h2>
+
+                <div class="budget-progress-large">
+
+                    {% set percentage =
+                        (
+                            budget.get('total', 0)
+                            /
+                            trip.budget
+                            *
+                            100
+                        )
+                        if trip.budget else 0
+                    %}
+
+                    <div
+                        style="
+                            width:
+                            {{ [percentage,100]|min }}%;
+                        "
+                    ></div>
+
+                </div>
+
+                <small>
+                    {{ "{:.0f}".format(
+                        [percentage,100]|min
+                    ) }}% planned
+                </small>
+
+            </div>
+
+        </section>
+
+
+
+        <section class="budget-grid">
+
+
+            <article class="budget-box">
+                <span>Transport</span>
+                <strong>₹{{ "{:,.0f}".format(
+                    budget.get('transport',0)
+                ) }}</strong>
+            </article>
+
+
+            <article class="budget-box">
+                <span>Hotel</span>
+                <strong>₹{{ "{:,.0f}".format(
+                    budget.get('hotel',0)
+                ) }}</strong>
+            </article>
+
+
+            <article class="budget-box">
+                <span>Food</span>
+                <strong>₹{{ "{:,.0f}".format(
+                    budget.get('food',0)
+                ) }}</strong>
+            </article>
+
+
+            <article class="budget-box">
+                <span>Activities</span>
+                <strong>₹{{ "{:,.0f}".format(
+                    budget.get('activities',0)
+                ) }}</strong>
+            </article>
+
+
+            <article class="budget-box">
+                <span>Other</span>
+                <strong>₹{{ "{:,.0f}".format(
+                    budget.get('other',0)
+                ) }}</strong>
+            </article>
+
+        </section>
+
+
+
+        <div class="budget-note">
+
+            💡 The final trip budget is calculated and synchronized
+            by the Python backend so the planned total stays within
+            your entered budget.
+
+        </div>
+
+
+    </div>
+
+</main>
+
+{% endblock %}

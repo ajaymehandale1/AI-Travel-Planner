@@ -1,0 +1,134 @@
+.destinations-page {
+    min-height: calc(100vh - 72px);
+    padding: 45px 20px 65px;
+    background: #f5f8fa;
+}
+
+.destinations-container {
+    width: min(1120px, 100%);
+    margin: 0 auto;
+}
+
+.destinations-heading h1 {
+    margin-top: 7px;
+    color: #173b59;
+    font-size: 34px;
+    font-weight: 800;
+}
+
+.destinations-heading p:last-child {
+    margin-top: 8px;
+    color: #758591;
+    font-size: 13px;
+}
+
+.destination-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 17px;
+    margin-top: 28px;
+}
+
+.destination-card {
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e0e9ed;
+    border-radius: 15px;
+    box-shadow: 0 7px 23px rgba(23, 59, 89, .05);
+}
+
+.destination-image {
+    position: relative;
+    height: 160px;
+    overflow: hidden;
+    background: #dcece9;
+}
+
+.destination-image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.destination-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, .35),
+        rgba(0, 0, 0, 0)
+    );
+}
+
+.destination-image span {
+    position: absolute;
+    left: 13px;
+    bottom: 13px;
+    z-index: 2;
+
+    padding: 6px 9px;
+
+    border-radius: 7px;
+
+    background: rgba(23, 59, 89, .88);
+
+    color: #ffffff;
+
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.destination-body {
+    padding: 15px;
+}
+
+.destination-body h3 {
+    color: #173b59;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.destination-body p {
+    margin-top: 5px;
+    color: #748691;
+    font-size: 9px;
+}
+
+.destination-body a {
+    display: inline-block;
+    margin-top: 12px;
+    color: #0f9f83;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.destination-body a:hover {
+    color: #087c68;
+}
+
+@media (max-width: 950px) {
+
+    .destination-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .destination-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .destination-grid {
+        grid-template-columns: 1fr;
+    }
+
+}

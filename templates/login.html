@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}
+Login | AI Travel Planner
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/auth.css') }}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<main class="auth-page">
+
+
+    <section class="auth-info">
+
+        <p class="eyebrow">
+            WELCOME BACK
+        </p>
+
+        <h1>
+            Your next trip starts here.
+        </h1>
+
+        <p>
+            Login to manage your travel plans and saved trips.
+        </p>
+
+    </section>
+
+
+
+    <section class="auth-card">
+
+        <p class="eyebrow">
+            ACCOUNT
+        </p>
+
+        <h2>
+            Welcome Back
+        </h2>
+
+        <p class="auth-muted">
+            Login to continue your travel journey.
+        </p>
+
+
+        <form
+            method="POST"
+            class="auth-form"
+        >
+
+
+            <label>
+
+                Email
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="you@example.com"
+                    required
+                >
+
+            </label>
+
+
+            <label>
+
+                Password
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                >
+
+            </label>
+
+
+            <button type="submit">
+                Login
+            </button>
+
+
+        </form>
+
+
+        <p class="auth-switch">
+
+            Don't have an account?
+
+            <a href="{{ url_for('register') }}">
+                Register Here
+            </a>
+
+        </p>
+
+    </section>
+
+</main>
+
+{% endblock %}

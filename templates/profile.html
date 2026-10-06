@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}
+Profile | AI Travel Planner
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/profile.css') }}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<main class="profile-page">
+
+    <div class="profile-container">
+
+
+        <div class="profile-heading">
+
+            <p class="eyebrow">
+                ACCOUNT
+            </p>
+
+            <h1>
+                My Profile
+            </h1>
+
+        </div>
+
+
+
+        <section class="profile-card">
+
+
+            <div class="profile-avatar">
+                {{ current_user.name[0]|upper }}
+            </div>
+
+
+            <div class="profile-details">
+
+                <h2>
+                    {{ current_user.name }}
+                </h2>
+
+                <p>
+                    {{ current_user.email }}
+                </p>
+
+            </div>
+
+
+            <div class="profile-stats">
+
+
+                <div>
+
+                    <span>
+                        SAVED TRIPS
+                    </span>
+
+                    <strong>
+                        {{ saved_count }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        MEMBER SINCE
+                    </span>
+
+                    <strong>
+
+                        {% if current_user.created_at %}
+                        {{ current_user.created_at.strftime('%d %b %Y') }}
+                        {% else %}
+                        2026
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="profile-actions">
+
+                <a
+                    href="{{ url_for('my_trips') }}"
+                    class="profile-primary"
+                >
+                    My Trips
+                </a>
+
+
+                <a
+                    href="{{ url_for('logout') }}"
+                    class="profile-secondary"
+                >
+                    Logout
+                </a>
+
+            </div>
+
+
+        </section>
+
+    </div>
+
+</main>
+
+{% endblock %}

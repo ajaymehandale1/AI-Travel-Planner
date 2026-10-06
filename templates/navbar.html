@@ -1,0 +1,99 @@
+<header class="navbar">
+
+    <a
+        href="{{ url_for('home') }}"
+        class="logo"
+    >
+        AI Travel Planner
+    </a>
+
+
+    <nav
+        class="nav-links"
+        aria-label="Main navigation"
+    >
+
+        <a
+            href="{{ url_for('home') }}"
+            class="{% if request.endpoint == 'home' %}active{% endif %}"
+        >
+            Home
+        </a>
+
+
+        <a
+            href="{{ url_for('planner') }}"
+            class="{% if request.endpoint in ['planner', 'processing'] %}active{% endif %}"
+        >
+            Plan Trip
+        </a>
+
+
+        <a
+            href="{{ url_for('destinations') }}"
+            class="{% if request.endpoint == 'destinations' %}active{% endif %}"
+        >
+            Destinations
+        </a>
+
+
+        <a
+            href="{{ url_for('my_trips') }}"
+            class="{% if request.endpoint in ['my_trips', 'view_trip'] %}active{% endif %}"
+        >
+            My Trips
+        </a>
+
+
+        <a
+            href="{{ url_for('about') }}"
+            class="{% if request.endpoint == 'about' %}active{% endif %}"
+        >
+            About Us
+        </a>
+
+    </nav>
+
+
+    <div class="navbar-account">
+
+        {% if session.get('user_id') %}
+
+        <a
+            href="{{ url_for('profile') }}"
+            class="navbar-avatar"
+            title="Profile"
+        >
+            {{ session.get('user_name', 'U')[0]|upper }}
+        </a>
+
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="navbar-logout"
+        >
+            Logout
+        </a>
+
+        {% else %}
+
+        <a
+            href="{{ url_for('login') }}"
+            class="navbar-login"
+        >
+            Login
+        </a>
+
+
+        <a
+            href="{{ url_for('register') }}"
+            class="navbar-register"
+        >
+            Register
+        </a>
+
+        {% endif %}
+
+    </div>
+
+</header>

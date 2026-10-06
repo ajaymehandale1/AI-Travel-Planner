@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Trip Overview | AI Travel Planner{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}?v=3">
+{% endblock %}
+
+{% block content %}
+
+<main class="result-page">
+    <div class="result-container">
+
+        <!-- MAIN RESULT CARD -->
+        <section class="result-card">
+
+            <div class="result-info">
+
+                <span class="result-label">TRAVEL PLAN</span>
+
+                <h1>
+                    Trip to {{ plan.trip.destination }}
+                </h1>
+
+                <div class="result-meta">
+                    <span>
+                        {{ plan.trip.days }}
+                        {{ 'Day' if plan.trip.days == 1 else 'Days' }}
+                    </span>
+
+                    <span class="meta-dot">•</span>
+
+                    {% set traveler_count = plan.trip.persons or plan.trip.travelers or 1 %}
+
+                    <span>
+                        {{ traveler_count }}
+                        {{ 'Person' if traveler_count == 1 else 'People' }}
+                    </span>
+
+                    <span class="meta-dot">•</span>
+
+                    <span>
+                        Budget: ₹{{ "{:,.0f}".format(plan.trip.budget) }}
+                    </span>
+                </div>
+
+                <p class="result-summary">
+                    {{ plan.trip.summary }}
+                </p>
+
+                <!-- COST -->
+                <div class="cost-section">
+
+                    <div class="cost-item">
+                        <span class="cost-label">
+                            Estimated Total Cost
+                        </span>
+
+                        <strong>
+                            ₹{{ "{:,.0f}".format(plan.budget.total) }}
+                        </strong>
+                    </div>
+
+                    <div class="cost-divider"></div>
+
+                    <div class="cost-item remaining">
+                        <span class="cost-label">
+                            Remaining Budget
+                        </span>
+
+                        <strong>
+                            ₹{{ "{:,.0f}".format(plan.budget.remaining) }}
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DESTINATION IMAGE -->
+            <div class="result-image-wrap">
+
+                {% if plan.destination_image %}
+
+                    <img
+                        src="{{ plan.destination_image }}"
+                        alt="{{ plan.trip.destination }} travel destination"
+                    >
+
+                {% else %}
+
+                    <div class="image-unavailable">
+                        <span>Image unavailable</span>
+                        <small>
+                            Destination image could not be generated.
+                        </small>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        <!-- BUDGET SUMMARY -->
+        <section class="budget-card">
+
+            <div class="budget-item">
+                <div class="budget-icon">🚆</div>
+                <span>Transport</span>
+                <strong>
+                    ₹{{ "{:,.0f}".format(plan.budget.transport) }}
+                </strong>
+            </div>
+
+            <div class="budget-item">
+                <div class="budget-icon">🏨</div>
+                <span>Hotel</span>
+                <strong>
+                    ₹{{ "{:,.0f}".format(plan.budget.hotel) }}
+                </strong>
+            </div>
+
+            <div class="budget-item">
+                <div class="budget-icon">🍴</div>
+                <span>Food</span>
+                <strong>
+                    ₹{{ "{:,.0f}".format(plan.budget.food) }}
+                </strong>
+            </div>
+
+            <div class="budget-item">
+                <div class="budget-icon">🎯</div>
+                <span>Activities</span>
+                <strong>
+                    ₹{{ "{:,.0f}".format(plan.budget.activities) }}
+                </strong>
+            </div>
+
+            <div class="budget-item last-item">
+                <div class="budget-icon">👜</div>
+                <span>Other</span>
+                <strong>
+                    ₹{{ "{:,.0f}".format(plan.budget.other) }}
+                </strong>
+            </div>
+
+        </section>
+
+
+        <!-- ACTION BUTTONS -->
+        <section class="result-actions">
+
+            <form method="POST"
+                  action="{{ url_for('save_trip') }}">
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    Save Trip
+                </button>
+
+            </form>
+
+
+            <a
+                href="{{ url_for('itinerary') }}"
+                class="secondary-button"
+            >
+                View Itinerary →
+            </a>
+
+        </section>
+
+
+        <!-- DESTINATION GUIDE -->
+        <section class="destination-guide">
+
+            <div class="guide-heading">
+
+                <span class="result-label">
+                    DESTINATION GUIDE
+                </span>
+
+                <h2>
+                    About {{ plan.trip.destination }}
+                </h2>
+
+            </div>
+
+
+            <p class="guide-description">
+                {{ plan.destination_info.description }}
+            </p>
+
+
+            <div class="guide-grid">
+
+                <div class="guide-box">
+
+                    <span>BEST TIME</span>
+
+                    <strong>
+                        {{ plan.destination_info.best_time
+                           or 'Information unavailable.' }}
+                    </strong>
+
+                </div>
+
+
+                <div class="guide-box">
+
+                    <span>TRAVEL NOTE</span>
+
+                    <strong>
+                        {{ plan.destination_info.travel_note
+                           or 'Confirm local timings and travel conditions before visiting.' }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            {% if plan.destination_info.highlights %}
+
+            <div class="highlights">
+
+                <h3>
+                    Top Highlights
+                </h3>
+
+                <div class="highlight-list">
+
+                    {% for item in plan.destination_info.highlights %}
+
+                        <span>
+                            {{ item }}
+                        </span>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+</main>
+
+{% endblock %}

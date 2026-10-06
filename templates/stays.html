@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+
+{% block title %}Recommended Stays | AI Travel Planner{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stays.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<main class="stays-page">
+
+    <div class="stays-container">
+
+        <!-- =====================================================
+             PAGE HEADING
+        ====================================================== -->
+
+        <section class="page-heading">
+
+            <span class="section-label">
+                ACCOMMODATION
+            </span>
+
+            <h1>
+                Recommended Stays
+            </h1>
+
+            <p>
+                Comfortable accommodation options selected for
+                <strong>
+                    {{ destination or trip.destination or 'your destination' }}.
+                </strong>
+            </p>
+
+        </section>
+
+
+        <!-- =====================================================
+             STAYS GRID
+        ====================================================== -->
+
+        {% if stays %}
+
+        <section class="stays-grid">
+
+            {% for stay in stays %}
+
+            <article class="stay-card">
+
+                <!-- =================================================
+                     IMAGE
+                ================================================== -->
+
+                <div class="stay-image">
+
+                    {% if stay.image_url %}
+
+                    <img
+                        src="{{ stay.image_url }}"
+                        alt="{{ stay.name or 'Recommended stay' }}"
+                        loading="lazy"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                    >
+
+                    <div
+                        class="stay-image-fallback"
+                        style="display:none;"
+                    >
+                        🏨
+                    </div>
+
+                    {% else %}
+
+                    <div class="stay-image-fallback">
+                        🏨
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- STAY TYPE -->
+
+                    {% set stay_type =
+                        stay.type
+                        or stay.category
+                        or 'Hotel'
+                    %}
+
+                    <span
+                        class="stay-badge {{ stay_type|lower|replace(' ', '-') }}"
+                    >
+                        {{ stay_type }}
+                    </span>
+
+                </div>
+
+
+                <!-- =================================================
+                     CONTENT
+                ================================================== -->
+
+                <div class="stay-content">
+
+                    <h2>
+                        {{ stay.name or 'Recommended Stay' }}
+                    </h2>
+
+
+                    <!-- LOCATION -->
+
+                    {% if stay.location %}
+
+                    <p class="location">
+                        📍 {{ stay.location }}
+                    </p>
+
+                    {% elif stay.address %}
+
+                    <p class="location">
+                        📍 {{ stay.address }}
+                    </p>
+
+                    {% else %}
+
+                    <p class="location">
+                        📍 {{ destination or 'Destination' }}
+                    </p>
+
+                    {% endif %}
+
+
+                    <!-- DESCRIPTION -->
+
+                    <p class="stay-description">
+
+                        {{
+                            stay.description
+                            or
+                            'Comfortable accommodation with convenient location and essential facilities for your trip.'
+                        }}
+
+                    </p>
+
+
+                    <!-- =================================================
+                         RATING
+                    ================================================== -->
+
+                    <div class="rating-row">
+
+                        <span class="rating">
+                            ★
+                            {{ stay.rating or '4.0' }}
+                        </span>
+
+
+                        {% if stay.reviews %}
+
+                        <span class="reviews">
+                            {{ stay.reviews }} reviews
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- =================================================
+                         BOTTOM
+                    ================================================== -->
+
+                    <div class="stay-bottom">
+
+
+                        <!-- PRICE -->
+
+                        <div class="price">
+
+                            <strong>
+
+                                {% if stay.price_per_night is not none %}
+
+                                    ₹{{ "{:,.0f}".format(
+                                        stay.price_per_night|float
+                                    ) }}
+
+                                {% elif stay.price is not none %}
+
+                                    ₹{{ "{:,.0f}".format(
+                                        stay.price|float
+                                    ) }}
+
+                                {% else %}
+
+                                    ₹600
+
+                                {% endif %}
+
+                            </strong>
+
+                            <span>
+                                / night
+                            </span>
+
+                        </div>
+
+
+                        <!-- LOCATION BUTTON -->
+
+                        {% if stay.map_url %}
+
+                        <a
+                            class="details-button"
+                            href="{{ stay.map_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            View Location →
+                        </a>
+
+                        {% elif stay.location %}
+
+                        <a
+                            class="details-button"
+                            href="https://www.google.com/maps/search/?api=1&query={{ stay.location|urlencode }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            View Location →
+                        </a>
+
+                        {% elif destination %}
+
+                        <a
+                            class="details-button"
+                            href="https://www.google.com/maps/search/?api=1&query={{ destination|urlencode }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            View Location →
+                        </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        </section>
+
+
+        <!-- =====================================================
+             AI NOTE
+        ====================================================== -->
+
+        <div class="ai-note">
+
+            <span>
+                🤖
+                Stay recommendations are AI-generated suggestions.
+                Please verify current price, availability, reviews and
+                hotel policies before booking.
+            </span>
+
+        </div>
+
+
+        {% else %}
+
+        <!-- =====================================================
+             EMPTY STATE
+        ====================================================== -->
+
+        <section class="no-stays">
+
+            <div style="font-size:42px; margin-bottom:10px;">
+                🏨
+            </div>
+
+            <h2>
+                No stays available
+            </h2>
+
+            <p>
+                No accommodation recommendations are available for
+                this trip yet.
+            </p>
+
+        </section>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             BOTTOM NAVIGATION
+        ====================================================== -->
+
+        <div class="bottom-actions">
+
+            <a
+                href="{{ url_for('itinerary') }}"
+                class="secondary-button"
+            >
+                ← Back to Itinerary
+            </a>
+
+
+            <a
+                href="{{ url_for('result') }}"
+                class="secondary-button"
+            >
+                Trip Overview
+            </a>
+
+
+            <a
+                href="{{ url_for('planner') }}"
+                class="primary-button"
+            >
+                Plan New Trip
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+{% endblock %}

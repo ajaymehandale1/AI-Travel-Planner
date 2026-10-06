@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}
+About Us | AI Travel Planner
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/about.css') }}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<main class="about-page">
+
+    <div class="about-container">
+
+
+        <section class="about-hero">
+
+            <p class="eyebrow">
+                ABOUT AI TRAVEL PLANNER
+            </p>
+
+
+            <h1>
+                Plan Smarter.
+                Travel Better.
+            </h1>
+
+
+            <p>
+                AI Travel Planner based on Budget is a web application
+                designed to create personalized and practical trips
+                according to a user's budget, preferences and travel needs.
+            </p>
+
+        </section>
+
+
+
+        <section class="about-grid">
+
+
+            <article class="about-card">
+
+                <span>
+                    AI POWERED
+                </span>
+
+                <h2>
+                    Personalized Planning
+                </h2>
+
+                <p>
+                    The system uses AI to create destination-specific
+                    itinerary suggestions based on the information
+                    entered by the traveler.
+                </p>
+
+            </article>
+
+
+            <article class="about-card">
+
+                <span>
+                    BUDGET BASED
+                </span>
+
+                <h2>
+                    Smart Cost Control
+                </h2>
+
+                <p>
+                    Transport, accommodation, food, activities and
+                    other expenses are organized within the user's
+                    total trip budget.
+                </p>
+
+            </article>
+
+
+            <article class="about-card">
+
+                <span>
+                    SIMPLE
+                </span>
+
+                <h2>
+                    Easy Travel Workflow
+                </h2>
+
+                <p>
+                    Users enter trip details, generate a plan,
+                    review the itinerary and save their favorite trips.
+                </p>
+
+            </article>
+
+
+        </section>
+
+
+    </div>
+
+</main>
+
+{% endblock %}

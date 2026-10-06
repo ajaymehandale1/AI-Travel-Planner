@@ -1,0 +1,627 @@
+/* =========================================================
+   AI TRAVEL PLANNER
+   PLANNER PAGE CSS
+========================================================= */
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.planner-page {
+    min-height: calc(100vh - 72px);
+
+    padding: 48px 20px 70px;
+
+    background: #f7f9f8;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.planner-header {
+    width: 100%;
+
+    max-width: 900px;
+
+    margin: 0 auto 34px;
+
+    text-align: center;
+}
+
+
+.planner-tag {
+    display: inline-block;
+
+    margin-bottom: 9px;
+
+    color: #0f9f83;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.6px;
+
+    text-transform: uppercase;
+}
+
+
+.planner-header h1 {
+    margin: 0;
+
+    color: #182823;
+
+    font-size: 38px;
+
+    line-height: 1.2;
+
+    font-weight: 800;
+
+    letter-spacing: -0.5px;
+}
+
+
+.planner-header p {
+    max-width: 680px;
+
+    margin: 13px auto 0;
+
+    color: #71807c;
+
+    font-size: 14px;
+
+    line-height: 1.75;
+}
+
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.planner-card {
+    width: 100%;
+
+    max-width: 1080px;
+
+    margin: 0 auto;
+
+    padding: 34px 38px 36px;
+
+    background: #ffffff;
+
+    border: 1px solid #e4ebe8;
+
+    border-radius: 17px;
+
+    box-shadow:
+        0 10px 32px rgba(25, 47, 42, 0.07);
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.planner-form {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    column-gap: 30px;
+
+    row-gap: 20px;
+}
+
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.form-group {
+    width: 100%;
+
+    min-width: 0;
+
+    position: relative;
+}
+
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #24322e;
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   INPUT + SELECT
+========================================================= */
+
+.form-group input,
+.form-group select {
+    width: 100%;
+
+    height: 50px;
+
+    padding: 0 14px;
+
+    border: 1px solid #dbe5e1;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #263632;
+
+    font-family: "Poppins", sans-serif;
+
+    font-size: 14px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.form-group input::placeholder {
+    color: #a1aca9;
+}
+
+
+.form-group input:hover,
+.form-group select:hover {
+    border-color: #cbd9d5;
+}
+
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #0f9f83;
+
+    box-shadow:
+        0 0 0 3px rgba(15, 159, 131, 0.10);
+
+    background: #ffffff;
+}
+
+
+/* =========================================================
+   DATE INPUT
+========================================================= */
+
+.form-group input[type="date"] {
+    color: #263632;
+}
+
+
+.form-group input[type="date"]:not(:valid) {
+    color: #a1aca9;
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.form-group select {
+    cursor: pointer;
+
+    appearance: auto;
+}
+
+
+/* =========================================================
+   LOCATION FIELD
+========================================================= */
+
+.location-field {
+    width: 100%;
+
+    position: relative;
+}
+
+
+.location-field input {
+    padding-left: 44px;
+}
+
+
+.location-icon {
+    position: absolute;
+
+    left: 15px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    z-index: 3;
+
+    color: #0f9f83;
+
+    font-size: 18px;
+
+    line-height: 1;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   LOCATION SUGGESTIONS
+========================================================= */
+
+.location-suggestions {
+    position: absolute;
+
+    top: calc(100% + 6px);
+
+    left: 0;
+
+    right: 0;
+
+    display: none;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid #dde8e4;
+
+    border-radius: 11px;
+
+    box-shadow:
+        0 12px 30px rgba(24, 48, 42, 0.12);
+
+    z-index: 1000;
+}
+
+
+.location-suggestions.show {
+    display: block;
+}
+
+
+/* =========================================================
+   LOCATION OPTION
+========================================================= */
+
+.location-option {
+    width: 100%;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 11px;
+
+    padding: 12px 14px;
+
+    border-bottom: 1px solid #eff3f1;
+
+    background: #ffffff;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease;
+}
+
+
+.location-option:last-child {
+    border-bottom: none;
+}
+
+
+.location-option:hover {
+    background: #f3faf7;
+}
+
+
+.location-pin {
+    flex: 0 0 auto;
+
+    margin-top: 1px;
+
+    color: #0f9f83;
+
+    font-size: 17px;
+
+    line-height: 1.2;
+}
+
+
+.location-text {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.location-text strong {
+    overflow: hidden;
+
+    color: #24342f;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    line-height: 1.4;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+.location-text small {
+    overflow: hidden;
+
+    color: #7c8985;
+
+    font-size: 11px;
+
+    line-height: 1.4;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   BUTTON AREA
+========================================================= */
+
+.form-action {
+    grid-column: 1 / -1;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    margin-top: 8px;
+
+    padding-top: 2px;
+}
+
+
+/* =========================================================
+   PLAN BUTTON
+========================================================= */
+
+.plan-btn {
+    min-width: 220px;
+
+    height: 51px;
+
+    padding: 0 25px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #0f9f83;
+
+    color: #ffffff;
+
+    font-family: "Poppins", sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 18px rgba(15, 159, 131, 0.16);
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.plan-btn:hover {
+    background: #0c8d74;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 10px 22px rgba(15, 159, 131, 0.21);
+}
+
+
+.plan-btn:active {
+    transform: translateY(0);
+}
+
+
+.plan-btn span {
+    font-size: 19px;
+
+    line-height: 1;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 850px) {
+
+    .planner-page {
+        padding: 40px 16px 55px;
+    }
+
+
+    .planner-card {
+        padding: 28px 25px 30px;
+    }
+
+
+    .planner-form {
+        column-gap: 20px;
+
+        row-gap: 18px;
+    }
+
+
+    .planner-header h1 {
+        font-size: 32px;
+    }
+
+
+    .planner-header p {
+        font-size: 13px;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .planner-page {
+        padding: 32px 14px 45px;
+    }
+
+
+    .planner-header {
+        margin-bottom: 25px;
+    }
+
+
+    .planner-header h1 {
+        font-size: 29px;
+    }
+
+
+    .planner-header p {
+        font-size: 12px;
+
+        line-height: 1.7;
+
+        padding: 0 8px;
+    }
+
+
+    .planner-card {
+        padding: 24px 18px 27px;
+
+        border-radius: 14px;
+    }
+
+
+    .planner-form {
+        grid-template-columns: 1fr;
+
+        gap: 18px;
+    }
+
+
+    .form-action {
+        grid-column: 1;
+
+        margin-top: 3px;
+    }
+
+
+    .plan-btn {
+        width: 100%;
+
+        min-width: 0;
+
+        height: 49px;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - SMALL MOBILE
+========================================================= */
+
+@media (max-width: 420px) {
+
+    .planner-page {
+        padding-left: 10px;
+
+        padding-right: 10px;
+    }
+
+
+    .planner-header h1 {
+        font-size: 26px;
+    }
+
+
+    .planner-card {
+        padding: 21px 14px 24px;
+    }
+
+
+    .form-group label {
+        font-size: 12px;
+    }
+
+
+    .form-group input,
+    .form-group select {
+        height: 47px;
+
+        font-size: 13px;
+    }
+
+
+    .location-field input {
+        padding-left: 41px;
+    }
+
+
+    .location-option {
+        padding: 11px 12px;
+    }
+
+
+    .location-text strong {
+        font-size: 12px;
+    }
+
+
+    .location-text small {
+        font-size: 10px;
+    }
+
+}

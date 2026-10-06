@@ -1,0 +1,959 @@
+{% extends "base.html" %}
+
+{% block title %}Plan Your Trip - AI Travel Planner{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/planner.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<main class="planner-page">
+
+    <section class="planner-header">
+        <div>
+            <span class="planner-tag">AI TRAVEL PLANNER</span>
+
+            <h1>Plan Your Perfect Trip</h1>
+
+            <p>
+                Tell us about your travel preferences and budget.
+                Our AI will create a personalized travel plan for you.
+            </p>
+        </div>
+    </section>
+
+
+    <section class="planner-card">
+
+        <form
+            method="POST"
+            action="{{ url_for('planner') }}"
+            class="planner-form"
+        >
+
+            <!-- =================================================
+                 ROW 1
+            ================================================== -->
+
+            <div class="form-group">
+
+                <label for="starting_location">
+                    Starting Location
+                </label>
+
+                <div class="location-field">
+
+                    <span class="location-icon">⌖</span>
+
+                    <input
+                        type="text"
+                        id="starting_location"
+                        name="starting_location"
+                        placeholder="Enter starting location"
+                        value="{{ request.form.get('starting_location', '') }}"
+                        autocomplete="off"
+                        required
+                    >
+
+                    <div
+                        id="starting-suggestions"
+                        class="location-suggestions"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="destination">
+                    Destination
+                </label>
+
+                <div class="location-field">
+
+                    <span class="location-icon">⌖</span>
+
+                    <input
+                        type="text"
+                        id="destination"
+                        name="destination"
+                        placeholder="Enter destination"
+                        value="{{ request.form.get('destination', '') }}"
+                        autocomplete="off"
+                        required
+                    >
+
+                    <div
+                        id="destination-suggestions"
+                        class="location-suggestions"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ROW 2
+            ================================================== -->
+
+            <div class="form-group">
+
+                <label for="travel_date">
+                    Travel Date
+                </label>
+
+                <input
+                    type="date"
+                    id="travel_date"
+                    name="travel_date"
+                    value="{{ request.form.get('travel_date', '') }}"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="budget">
+                    Total Budget (₹)
+                </label>
+
+                <input
+                    type="number"
+                    id="budget"
+                    name="budget"
+                    placeholder="Enter your total budget"
+                    min="500"
+                    step="100"
+                    value="{{ request.form.get('budget', '') }}"
+                    required
+                >
+
+            </div>
+
+
+            <!-- =================================================
+                 ROW 3
+            ================================================== -->
+
+            <div class="form-group">
+
+                <label for="days">
+                    Number of Days
+                </label>
+
+                <input
+                    type="number"
+                    id="days"
+                    name="days"
+                    placeholder="e.g. 3"
+                    min="1"
+                    max="30"
+                    value="{{ request.form.get('days', '') }}"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="travelers">
+                    Number of Travelers
+                </label>
+
+                <input
+                    type="number"
+                    id="travelers"
+                    name="travelers"
+                    placeholder="e.g. 2"
+                    min="1"
+                    max="50"
+                    value="{{ request.form.get('travelers', '') }}"
+                    required
+                >
+
+            </div>
+
+
+            <!-- =================================================
+                 ROW 4
+            ================================================== -->
+
+            <div class="form-group">
+
+                <label for="travel_preference">
+                    Travel Style
+                </label>
+
+                <select
+                    id="travel_preference"
+                    name="travel_preference"
+                    required
+                >
+
+                    <option
+                        value=""
+                        disabled
+                        {% if not request.form.get('travel_preference') %}
+                            selected
+                        {% endif %}
+                    >
+                        Select travel style
+                    </option>
+
+                    <option
+                        value="Relaxation"
+                        {% if request.form.get('travel_preference') == 'Relaxation' %}
+                            selected
+                        {% endif %}
+                    >
+                        Relaxation
+                    </option>
+
+                    <option
+                        value="Cultural and Historical"
+                        {% if request.form.get('travel_preference') == 'Cultural and Historical' %}
+                            selected
+                        {% endif %}
+                    >
+                        Cultural and Historical
+                    </option>
+
+                    <option
+                        value="Romantic for Couples"
+                        {% if request.form.get('travel_preference') == 'Romantic for Couples' %}
+                            selected
+                        {% endif %}
+                    >
+                        Romantic for Couples
+                    </option>
+
+                    <option
+                        value="Family-Friendly"
+                        {% if request.form.get('travel_preference') == 'Family-Friendly' %}
+                            selected
+                        {% endif %}
+                    >
+                        Family-Friendly
+                    </option>
+
+                    <option
+                        value="Adventure and Outdoor"
+                        {% if request.form.get('travel_preference') == 'Adventure and Outdoor' %}
+                            selected
+                        {% endif %}
+                    >
+                        Adventure and Outdoor
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="transport_preference">
+                    Transport Preference
+                </label>
+
+                <select
+                    id="transport_preference"
+                    name="transport_preference"
+                    required
+                >
+
+                    <option
+                        value=""
+                        disabled
+                        {% if not request.form.get('transport_preference') %}
+                            selected
+                        {% endif %}
+                    >
+                        Select transport
+                    </option>
+
+                    <option
+                        value="Any"
+                        {% if request.form.get('transport_preference') == 'Any' %}
+                            selected
+                        {% endif %}
+                    >
+                        Any
+                    </option>
+
+                    <option
+                        value="Train"
+                        {% if request.form.get('transport_preference') == 'Train' %}
+                            selected
+                        {% endif %}
+                    >
+                        Train
+                    </option>
+
+                    <option
+                        value="Bus"
+                        {% if request.form.get('transport_preference') == 'Bus' %}
+                            selected
+                        {% endif %}
+                    >
+                        Bus
+                    </option>
+
+                    <option
+                        value="Flight"
+                        {% if request.form.get('transport_preference') == 'Flight' %}
+                            selected
+                        {% endif %}
+                    >
+                        Flight
+                    </option>
+
+                    <option
+                        value="Car"
+                        {% if request.form.get('transport_preference') == 'Car' %}
+                            selected
+                        {% endif %}
+                    >
+                        Car
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- =================================================
+                 ROW 5
+            ================================================== -->
+
+            <div class="form-group">
+
+                <label for="hotel_preference">
+                    Hotel Preference
+                </label>
+
+                <select
+                    id="hotel_preference"
+                    name="hotel_preference"
+                    required
+                >
+
+                    <option
+                        value=""
+                        disabled
+                        {% if not request.form.get('hotel_preference') %}
+                            selected
+                        {% endif %}
+                    >
+                        Select hotel type
+                    </option>
+
+                    <option
+                        value="Hotel"
+                        {% if request.form.get('hotel_preference') == 'Hotel' %}
+                            selected
+                        {% endif %}
+                    >
+                        Hotel
+                    </option>
+
+                    <option
+                        value="Hostel"
+                        {% if request.form.get('hotel_preference') == 'Hostel' %}
+                            selected
+                        {% endif %}
+                    >
+                        Hostel
+                    </option>
+
+                    <option
+                        value="Homestay"
+                        {% if request.form.get('hotel_preference') == 'Homestay' %}
+                            selected
+                        {% endif %}
+                    >
+                        Homestay
+                    </option>
+
+                    <option
+                        value="Resort"
+                        {% if request.form.get('hotel_preference') == 'Resort' %}
+                            selected
+                        {% endif %}
+                    >
+                        Resort
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="food_preference">
+                    Food Preference
+                </label>
+
+                <select
+                    id="food_preference"
+                    name="food_preference"
+                    required
+                >
+
+                    <option
+                        value=""
+                        disabled
+                        {% if not request.form.get('food_preference') %}
+                            selected
+                        {% endif %}
+                    >
+                        Select food preference
+                    </option>
+
+                    <option
+                        value="Local Food"
+                        {% if request.form.get('food_preference') == 'Local Food' %}
+                            selected
+                        {% endif %}
+                    >
+                        Local Food
+                    </option>
+
+                    <option
+                        value="Any"
+                        {% if request.form.get('food_preference') == 'Any' %}
+                            selected
+                        {% endif %}
+                    >
+                        Any
+                    </option>
+
+                    <option
+                        value="Vegetarian"
+                        {% if request.form.get('food_preference') == 'Vegetarian' %}
+                            selected
+                        {% endif %}
+                    >
+                        Vegetarian
+                    </option>
+
+                    <option
+                        value="Non-Vegetarian"
+                        {% if request.form.get('food_preference') == 'Non-Vegetarian' %}
+                            selected
+                        {% endif %}
+                    >
+                        Non-Vegetarian
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- =================================================
+                 BUTTON
+            ================================================== -->
+
+            <div class="form-action">
+
+                <button
+                    type="submit"
+                    class="plan-btn"
+                >
+                    Plan My Trip
+                    <span>→</span>
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+
+<!-- =========================================================
+     LOCATION AUTOCOMPLETE
+========================================================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const fields = [
+
+        {
+            inputId: "starting_location",
+            suggestionsId: "starting-suggestions"
+        },
+
+        {
+            inputId: "destination",
+            suggestionsId: "destination-suggestions"
+        }
+
+    ];
+
+
+    fields.forEach(function (field) {
+
+        const input =
+            document.getElementById(field.inputId);
+
+        const suggestionsBox =
+            document.getElementById(field.suggestionsId);
+
+
+        let timer = null;
+        let controller = null;
+
+
+        input.addEventListener("input", function () {
+
+            const query =
+                input.value.trim();
+
+
+            clearTimeout(timer);
+
+
+            if (controller) {
+
+                controller.abort();
+
+            }
+
+
+            if (query.length < 2) {
+
+                suggestionsBox.innerHTML = "";
+
+                suggestionsBox.classList.remove("show");
+
+                return;
+
+            }
+
+
+            timer = setTimeout(async function () {
+
+                try {
+
+                    controller =
+                        new AbortController();
+
+
+                    const url =
+                        "https://photon.komoot.io/api/?q=" +
+                        encodeURIComponent(query) +
+                        "&limit=15&lang=en";
+
+
+                    const response =
+                        await fetch(
+                            url,
+                            {
+                                signal: controller.signal
+                            }
+                        );
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Location request failed"
+                        );
+
+                    }
+
+
+                    const data =
+                        await response.json();
+
+
+                    suggestionsBox.innerHTML = "";
+
+
+                    if (
+                        !data.features ||
+                        data.features.length === 0
+                    ) {
+
+                        suggestionsBox.classList.remove("show");
+
+                        return;
+
+                    }
+
+
+                    const results = [];
+
+
+                    data.features.forEach(function (feature) {
+
+                        const p =
+                            feature.properties || {};
+
+
+                        /*
+                         * Priority:
+                         * city → town → village →
+                         * municipality → locality → name
+                         */
+
+                        const city =
+                            p.city ||
+                            p.town ||
+                            p.village ||
+                            p.municipality ||
+                            p.locality ||
+                            "";
+
+
+                        const name =
+                            p.name || "";
+
+
+                        const state =
+                            p.state || "";
+
+
+                        const country =
+                            p.country || "India";
+
+
+                        /*
+                         * City/town/village should
+                         * become the main location.
+                         */
+
+                        let mainName = "";
+
+
+                        if (city) {
+
+                            mainName = city;
+
+                        } else if (name) {
+
+                            mainName = name;
+
+                        }
+
+
+                        if (!mainName) {
+
+                            return;
+
+                        }
+
+
+                        const lowerMain =
+                            mainName.toLowerCase();
+
+                        const lowerQuery =
+                            query.toLowerCase();
+
+                        const lowerState =
+                            state.toLowerCase();
+
+
+                        /*
+                         * Ignore a state-only result
+                         * such as "Maharashtra".
+                         */
+
+                        if (
+                            lowerMain === lowerState &&
+                            lowerMain !== lowerQuery
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        /*
+                         * Ignore country-only result.
+                         */
+
+                        if (
+                            lowerMain ===
+                            country.toLowerCase()
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        const parts = [];
+
+
+                        parts.push(mainName);
+
+
+                        if (
+                            state &&
+                            state.toLowerCase() !==
+                            mainName.toLowerCase()
+                        ) {
+
+                            parts.push(state);
+
+                        }
+
+
+                        if (
+                            country &&
+                            country.toLowerCase() !==
+                            mainName.toLowerCase() &&
+                            country.toLowerCase() !==
+                            state.toLowerCase()
+                        ) {
+
+                            parts.push(country);
+
+                        }
+
+
+                        const fullLocation =
+                            parts.join(", ");
+
+
+                        results.push({
+
+                            name: mainName,
+
+                            fullLocation:
+                                fullLocation
+
+                        });
+
+                    });
+
+
+                    /*
+                     * Remove duplicate locations.
+                     */
+
+                    const uniqueResults = [];
+
+
+                    results.forEach(function (item) {
+
+                        const alreadyExists =
+                            uniqueResults.some(
+                                function (oldItem) {
+
+                                    return (
+                                        oldItem.fullLocation
+                                            .toLowerCase() ===
+                                        item.fullLocation
+                                            .toLowerCase()
+                                    );
+
+                                }
+                            );
+
+
+                        if (!alreadyExists) {
+
+                            uniqueResults.push(item);
+
+                        }
+
+                    });
+
+
+                    /*
+                     * Show only useful results.
+                     */
+
+                    uniqueResults
+                        .slice(0, 7)
+                        .forEach(function (item) {
+
+                            const option =
+                                document.createElement("div");
+
+
+                            option.className =
+                                "location-option";
+
+
+                            option.innerHTML = `
+                                <span class="location-pin">
+                                    ⌖
+                                </span>
+
+                                <span class="location-text">
+
+                                    <strong>
+                                        ${escapeHtml(item.name)}
+                                    </strong>
+
+                                    <small>
+                                        ${escapeHtml(item.fullLocation)}
+                                    </small>
+
+                                </span>
+                            `;
+
+
+                            option.addEventListener(
+                                "click",
+                                function () {
+
+                                    input.value =
+                                        item.fullLocation;
+
+
+                                    suggestionsBox.innerHTML =
+                                        "";
+
+                                    suggestionsBox.classList.remove(
+                                        "show"
+                                    );
+
+                                }
+                            );
+
+
+                            suggestionsBox.appendChild(
+                                option
+                            );
+
+                        });
+
+
+                    if (
+                        suggestionsBox.children.length > 0
+                    ) {
+
+                        suggestionsBox.classList.add(
+                            "show"
+                        );
+
+                    } else {
+
+                        suggestionsBox.classList.remove(
+                            "show"
+                        );
+
+                    }
+
+                }
+
+                catch (error) {
+
+                    if (
+                        error.name !==
+                        "AbortError"
+                    ) {
+
+                        console.error(
+                            "Location search error:",
+                            error
+                        );
+
+                        suggestionsBox.innerHTML =
+                            "";
+
+                        suggestionsBox.classList.remove(
+                            "show"
+                        );
+
+                    }
+
+                }
+
+            }, 350);
+
+        });
+
+
+        /*
+         * Close suggestions when
+         * clicking outside.
+         */
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    !event.target.closest(
+                        ".location-field"
+                    )
+                ) {
+
+                    suggestionsBox.innerHTML =
+                        "";
+
+                    suggestionsBox.classList.remove(
+                        "show"
+                    );
+
+                }
+
+            }
+        );
+
+
+        /*
+         * ESC closes suggestions.
+         */
+
+        input.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (event.key === "Escape") {
+
+                    suggestionsBox.innerHTML =
+                        "";
+
+                    suggestionsBox.classList.remove(
+                        "show"
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+
+    /*
+     * Prevent HTML injection
+     * inside suggestion results.
+     */
+
+    function escapeHtml(text) {
+
+        const div =
+            document.createElement("div");
+
+        div.textContent = text;
+
+        return div.innerHTML;
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

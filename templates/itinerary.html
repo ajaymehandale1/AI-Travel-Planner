@@ -1,0 +1,1189 @@
+{% extends "base.html" %}
+
+{% block title %}Day Wise Itinerary | AI Travel Planner{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/itinerary.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{# =========================================================
+   TIME FORMAT MACRO
+   Converts:
+   00:00 -> 12:00 AM
+   09:41 -> 09:41 AM
+   12:00 -> 12:00 PM
+   15:55 -> 03:55 PM
+   18:00 -> 06:00 PM
+   21:50 -> 09:50 PM
+========================================================= #}
+
+{% macro format_time(value) %}
+    {% if value is not none and value|string|trim != '' %}
+
+        {% set t = value|string|trim %}
+        {% set lower_t = t|lower %}
+
+        {# Already contains AM/PM #}
+        {% if 'am' in lower_t or 'pm' in lower_t %}
+
+            {{ t }}
+
+        {# 24-hour time such as 09:41 or 15:55 #}
+        {% elif ':' in t %}
+
+            {% set parts = t.split(':') %}
+
+            {% if parts|length >= 2 %}
+
+                {% set hour = parts[0]|int %}
+                {% set minute = parts[1]|int %}
+
+                {% if hour == 0 %}
+
+                    12:{{ "%02d"|format(minute) }} AM
+
+                {% elif hour < 12 %}
+
+                    {{ "%02d"|format(hour) }}:{{ "%02d"|format(minute) }} AM
+
+                {% elif hour == 12 %}
+
+                    12:{{ "%02d"|format(minute) }} PM
+
+                {% else %}
+
+                    {{ "%02d"|format(hour - 12) }}:{{ "%02d"|format(minute) }} PM
+
+                {% endif %}
+
+            {% else %}
+
+                {{ t }}
+
+            {% endif %}
+
+        {% else %}
+
+            {{ t }}
+
+        {% endif %}
+
+    {% endif %}
+{% endmacro %}
+
+
+{# =========================================================
+   ACTIVITY ICON
+========================================================= #}
+
+{% macro activity_icon(activity_type) %}
+
+    {% set kind = (activity_type or 'activity')|lower %}
+
+    {% if kind in ['wake_up', 'morning'] %}
+        🌅
+
+    {% elif kind == 'breakfast' %}
+        ☕
+
+    {% elif kind == 'train' %}
+        🚆
+
+    {% elif kind == 'flight' %}
+        ✈️
+
+    {% elif kind == 'bus' %}
+        🚌
+
+    {% elif kind in ['travel', 'journey'] %}
+        🚕
+
+    {% elif kind in ['sightseeing', 'activity'] %}
+        📸
+
+    {% elif kind == 'lunch' %}
+        🍛
+
+    {% elif kind == 'shopping' %}
+        🛍️
+
+    {% elif kind in ['hotel_checkin', 'hotel_return'] %}
+        🏨
+
+    {% elif kind == 'hotel_checkout' %}
+        🧳
+
+    {% elif kind == 'dinner' %}
+        🍽️
+
+    {% elif kind == 'rest' %}
+        🛋️
+
+    {% elif kind == 'sleep' %}
+        😴
+
+    {% else %}
+        📍
+
+    {% endif %}
+
+{% endmacro %}
+
+
+{# =========================================================
+   DATA
+========================================================= #}
+
+{% set trip_data = trip or {} %}
+{% set budget_data = budget or {} %}
+
+{% set itinerary_data =
+    itinerary
+    if itinerary is defined
+    else (plan.get('itinerary', []) or [])
+%}
+
+{% if not itinerary_data %}
+    {% set itinerary_data = [] %}
+{% endif %}
+
+{% set trip_days =
+    trip_data.get('days')
+    or (itinerary_data|length)
+%}
+
+{% set trip_budget =
+    trip_data.get('budget', 0)
+%}
+
+{% set total_cost =
+    budget_data.get('total', 0)
+%}
+
+{% set remaining_budget =
+    budget_data.get('remaining', 0)
+%}
+
+{% set start_location =
+    trip_data.get('starting_location')
+    or trip_data.get('start_city')
+    or 'Not specified'
+%}
+
+{% set destination =
+    trip_data.get('destination')
+    or 'Destination'
+%}
+
+{% set travelers =
+    trip_data.get('persons')
+    or trip_data.get('travelers')
+    or 0
+%}
+
+
+<main class="itinerary-page">
+
+    <div class="itin-container">
+
+
+        <!-- =====================================================
+             INTRO
+        ====================================================== -->
+
+        <section class="intro-row">
+
+            <div class="intro-copy">
+
+                <span class="ai-badge">
+                    AI GENERATED
+                </span>
+
+                <h1>
+                    Day Wise Itinerary
+                </h1>
+
+                <p>
+                    Your personalized travel plan for
+                    <strong>{{ destination }}</strong>
+                </p>
+
+            </div>
+
+
+            <div class="trip-info-grid">
+
+                <div class="info-box">
+
+                    <span>
+                        STARTING CITY
+                    </span>
+
+                    <strong>
+                        {{ start_location }}
+                    </strong>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <span>
+                        DESTINATION
+                    </span>
+
+                    <strong>
+                        {{ destination }}
+                    </strong>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <span>
+                        TRAVELERS
+                    </span>
+
+                    <strong>
+                        {{ travelers }}
+                    </strong>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <span>
+                        BUDGET
+                    </span>
+
+                    <strong>
+                        ₹{{ "{:,.0f}".format(trip_budget|float) }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             COST SUMMARY
+        ====================================================== -->
+
+        <section class="cost-summary">
+
+            <div class="cost-item">
+
+                <span>
+                    TOTAL ESTIMATED TRIP COST
+                </span>
+
+                <strong>
+                    ₹{{ "{:,.0f}".format(total_cost|float) }}
+                </strong>
+
+            </div>
+
+
+            <div class="cost-divider"></div>
+
+
+            <div class="cost-item remaining">
+
+                <span>
+                    REMAINING BUDGET
+                </span>
+
+                <strong>
+                    ₹{{ "{:,.0f}".format(remaining_budget|float) }}
+                </strong>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             TRAIN OPTIONS
+        ====================================================== -->
+
+        {% if plan.get('train_options') or plan.get('train_error') %}
+
+        <section class="train-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-kicker">
+                        RAIL JOURNEY
+                    </span>
+
+                    <h2>
+                        {{
+                            'Live Train Options'
+                            if plan.get('train_source')
+                            else 'Train Options'
+                        }}
+                    </h2>
+
+                </div>
+
+
+                <p>
+                    Verify current timing, fare and live seat availability
+                    before booking.
+                </p>
+
+            </div>
+
+
+            {% if plan.get('train_options') %}
+
+            <div class="train-grid">
+
+                {% for train in plan.train_options %}
+
+                <article class="train-card">
+
+
+                    <!-- TRAIN NAME -->
+
+                    <div class="train-topline">
+
+                        <div>
+
+                            <span class="train-number">
+                                {{ train.train_number or 'Train' }}
+                            </span>
+
+                            <h3>
+                                {{ train.train_name or 'Train service' }}
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TRAIN ROUTE -->
+
+                    <div class="train-route">
+
+
+                        <!-- DEPARTURE -->
+
+                        <div class="station-block">
+
+                            <strong>
+                                {{ format_time(train.departure_time) or '--' }}
+                            </strong>
+
+                            <span>
+                                {{ train.from_station or start_location }}
+                            </span>
+
+                            {% if train.from_code %}
+
+                            <small>
+                                {{ train.from_code }}
+                            </small>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- TRAIN ICON -->
+
+                        <div class="route-line">
+
+                            <span>
+                                🚆
+                            </span>
+
+                            {% if train.duration %}
+
+                            <small>
+                                {{ train.duration }}
+                            </small>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ARRIVAL -->
+
+                        <div class="station-block station-right">
+
+                            <strong>
+                                {{ format_time(train.arrival_time) or '--' }}
+                            </strong>
+
+                            <span>
+                                {{ train.to_station or destination }}
+                            </span>
+
+                            {% if train.to_code %}
+
+                            <small>
+                                {{ train.to_code }}
+                            </small>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TRAIN EXTRA -->
+
+                    <div class="train-extra">
+
+                        {% if train.travel_date %}
+
+                        <span>
+                            📅 {{ train.travel_date }}
+                        </span>
+
+                        {% endif %}
+
+
+                        {% if train.live_type %}
+
+                        <span>
+                            ● {{ train.live_type|replace('_', ' ')|title }}
+                        </span>
+
+                        {% endif %}
+
+
+                        {% if train.delay_minutes is not none %}
+
+                        <span>
+                            Delay: {{ train.delay_minutes }} min
+                        </span>
+
+                        {% endif %}
+
+
+                        {% if train.platform %}
+
+                        <span>
+                            Platform: {{ train.platform }}
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- TRAIN CLASSES -->
+
+                    {% if train.classes %}
+
+                    <div class="class-row">
+
+                        {% for cls in train.classes %}
+
+                        <span>
+                            {{ cls }}
+                        </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- TRAIN NOTE -->
+
+                    {% if train.note %}
+
+                    <p class="train-note">
+                        {{ train.note }}
+                    </p>
+
+                    {% endif %}
+
+
+                    <!-- IRCTC BUTTON -->
+
+                    <div class="train-book-action">
+
+                        <a
+                            class="irctc-book-button"
+                            href="{{ train.book_url or 'https://www.irctc.co.in/nget/train-search' }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Book on IRCTC →
+                        </a>
+
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+
+            {% else %}
+
+            <div class="train-unavailable">
+
+                <strong>
+                    Live train information is currently unavailable.
+                </strong>
+
+                <p>
+                    {{
+                        plan.get('train_error')
+                        or
+                        'Please verify the route, date and current railway schedule before booking.'
+                    }}
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             ITINERARY
+        ====================================================== -->
+
+        <section class="itinerary-workspace">
+
+            <div class="days-content">
+
+                {% if itinerary_data %}
+
+                    {% for day in itinerary_data %}
+
+
+                    <!-- DAY CARD -->
+
+                    <details
+                        class="day-card"
+                        id="day-{{ day.day }}"
+                        {% if loop.first %}open{% endif %}
+                    >
+
+
+                        <!-- DAY HEADER -->
+
+                        <summary class="day-header">
+
+                            <div>
+
+                                <span class="day-label">
+                                    DAY {{ day.day }}
+                                </span>
+
+                                <h2>
+                                    {{ day.title or 'Explore ' ~ destination }}
+                                </h2>
+
+
+                                <div class="day-meta">
+
+                                    {% if day.date %}
+
+                                    <span>
+                                        📅 {{ day.date }}
+                                    </span>
+
+                                    {% endif %}
+
+
+                                    <span>
+                                        🧭 {{ (day.activities or [])|length }} stops
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </summary>
+
+
+                        <!-- DAY DETAILS -->
+
+                        <div class="timeline">
+
+                            {% for activity in day.activities or [] %}
+
+                            {% set kind =
+                                (activity.activity_type or 'activity')|lower
+                            %}
+
+                            {% set from_location =
+                                activity.previous_location or ''
+                            %}
+
+                            {% set to_location =
+                                activity.next_location or ''
+                            %}
+
+                            {% set has_route =
+                                from_location
+                                and to_location
+                                and from_location|lower != to_location|lower
+                            %}
+
+                            {% set is_movement =
+                                kind in [
+                                    'travel',
+                                    'train',
+                                    'flight',
+                                    'bus',
+                                    'hotel_return',
+                                    'journey'
+                                ]
+                            %}
+
+
+                            <!-- TIMELINE -->
+
+                            <div class="timeline-row">
+
+
+                                <!-- TIME -->
+
+                                <div class="time-column">
+
+                                    <strong>
+                                        {{ format_time(activity.start_time) }}
+                                    </strong>
+
+                                    {% if activity.end_time %}
+
+                                    <span>
+                                        {{ format_time(activity.end_time) }}
+                                    </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- ICON -->
+
+                                <div class="timeline-rail">
+
+                                    <div class="icon-dot">
+                                        {{ activity_icon(kind) }}
+                                    </div>
+
+                                    {% if not loop.last %}
+
+                                    <div class="vertical-line"></div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- ACTIVITY -->
+
+                                <div class="activity-card type-{{ kind }}">
+
+
+                                    <div class="activity-heading">
+
+                                        <div>
+
+                                            <span class="activity-type">
+                                                {{ kind.replace('_', ' ') }}
+                                            </span>
+
+                                            <h3>
+                                                {{ activity.place or 'Activity' }}
+                                            </h3>
+
+                                        </div>
+
+
+                                        {% if activity.duration %}
+
+                                        <span class="duration-pill">
+                                            {{ activity.duration }}
+                                        </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    <!-- LOCATION -->
+
+                                    {% if activity.location %}
+
+                                    <div class="location-line">
+                                        📍 {{ activity.location }}
+                                    </div>
+
+                                    {% endif %}
+
+
+                                    <!-- DESCRIPTION -->
+
+                                    {% if activity.description %}
+
+                                    <p class="activity-description">
+                                        {{ activity.description }}
+                                    </p>
+
+                                    {% endif %}
+
+
+                                    <!-- ROUTE -->
+
+                                    {% if has_route and is_movement %}
+
+                                    <div class="route-box">
+
+                                        <div>
+
+                                            <small>
+                                                FROM
+                                            </small>
+
+                                            <strong>
+                                                {{ from_location }}
+                                            </strong>
+
+                                        </div>
+
+
+                                        <div class="route-arrow">
+                                            →
+                                        </div>
+
+
+                                        <div>
+
+                                            <small>
+                                                TO
+                                            </small>
+
+                                            <strong>
+                                                {{ to_location }}
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                    {% endif %}
+
+
+                                    <!-- DISTANCE -->
+
+                                    {% set distance_text =
+                                        activity.distance or ''
+                                    %}
+
+
+                                    {% if not distance_text
+                                        and activity.distance_km is not none
+                                        and activity.distance_km|float > 0 %}
+
+                                        {% set distance_text =
+                                            activity.distance_km ~ ' km'
+                                        %}
+
+                                    {% endif %}
+
+
+                                    <!-- MOVEMENT INFORMATION -->
+
+                                    {% if is_movement and (
+                                        activity.travel_time
+                                        or activity.transport_mode
+                                        or distance_text
+                                    ) %}
+
+                                    <div class="info-grid">
+
+
+                                        {% if activity.travel_time %}
+
+                                        <div>
+
+                                            <small>
+                                                Travel time
+                                            </small>
+
+                                            <strong>
+                                                {{ activity.travel_time }}
+                                            </strong>
+
+                                        </div>
+
+                                        {% endif %}
+
+
+                                        {% if activity.transport_mode %}
+
+                                        <div>
+
+                                            <small>
+                                                Transport
+                                            </small>
+
+                                            <strong>
+                                                {{ activity.transport_mode }}
+                                            </strong>
+
+                                        </div>
+
+                                        {% endif %}
+
+
+                                        {% if distance_text %}
+
+                                        <div>
+
+                                            <small>
+                                                Distance
+                                            </small>
+
+                                            <strong>
+                                                {{ distance_text }}
+                                            </strong>
+
+                                        </div>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                    {% endif %}
+
+
+                                    <!-- TRAIN DETAILS -->
+
+                                    {% if kind == 'train'
+                                        and (
+                                            activity.train_number
+                                            or activity.train_name
+                                            or activity.departure_station
+                                            or activity.arrival_station
+                                        ) %}
+
+                                    <div class="train-mini-card">
+
+
+                                        <div>
+
+                                            <small>
+                                                Train
+                                            </small>
+
+                                            <strong>
+                                                {{ activity.train_number }}
+                                                {{ activity.train_name }}
+                                            </strong>
+
+                                        </div>
+
+
+                                        {% if activity.departure_station %}
+
+                                        <div>
+
+                                            <small>
+                                                Departure
+                                            </small>
+
+                                            <strong>
+
+                                                {{ activity.departure_station }}
+
+                                                {% if activity.departure_time %}
+
+                                                · {{ format_time(activity.departure_time) }}
+
+                                                {% endif %}
+
+                                            </strong>
+
+                                        </div>
+
+                                        {% endif %}
+
+
+                                        {% if activity.arrival_station %}
+
+                                        <div>
+
+                                            <small>
+                                                Arrival
+                                            </small>
+
+                                            <strong>
+
+                                                {{ activity.arrival_station }}
+
+                                                {% if activity.arrival_time %}
+
+                                                · {{ format_time(activity.arrival_time) }}
+
+                                                {% endif %}
+
+                                            </strong>
+
+                                        </div>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                    {% endif %}
+
+
+                                    <!-- MEAL -->
+
+                                    {% if activity.meal_type
+                                        or activity.food_suggestion
+                                        or activity.recommended_area %}
+
+                                    <div class="meal-box">
+
+
+                                        {% if activity.meal_type %}
+
+                                        <div>
+
+                                            <small>
+                                                Meal
+                                            </small>
+
+                                            <strong>
+                                                {{ activity.meal_type }}
+                                            </strong>
+
+                                        </div>
+
+                                        {% endif %}
+
+
+                                        {% if activity.food_suggestion %}
+
+                                        <div>
+
+                                            <small>
+                                                Try
+                                            </small>
+
+                                            <strong>
+                                                {{ activity.food_suggestion }}
+                                            </strong>
+
+                                        </div>
+
+                                        {% endif %}
+
+
+                                        {% if activity.recommended_area %}
+
+                                        <div>
+
+                                            <small>
+                                                Recommended area
+                                            </small>
+
+                                            <strong>
+                                                {{ activity.recommended_area }}
+                                            </strong>
+
+                                        </div>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                    {% endif %}
+
+
+                                    <!-- BOOKING NOTE -->
+
+                                    {% if activity.booking_required
+                                        or activity.booking_note %}
+
+                                    <div class="booking-note">
+
+                                        <strong>
+                                            🎟 Booking note
+                                        </strong>
+
+                                        <span>
+                                            {{
+                                                activity.booking_note
+                                                or
+                                                'Advance booking is recommended.'
+                                            }}
+                                        </span>
+
+                                    </div>
+
+                                    {% endif %}
+
+
+                                    <!-- FOOTER -->
+
+                                    <div class="activity-footer">
+
+                                        <div class="activity-actions">
+
+
+                                            {% if has_route and is_movement %}
+
+                                            <a
+                                                href="https://www.google.com/maps/dir/?api=1&origin={{ from_location|urlencode }}&destination={{ to_location|urlencode }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                🗺 Directions
+                                            </a>
+
+                                            {% elif activity.location %}
+
+                                            <a
+                                                href="https://www.google.com/maps/search/?api=1&query={{ activity.location|urlencode }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                📍 View Location
+                                            </a>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </details>
+
+                    {% endfor %}
+
+
+                {% else %}
+
+
+                <!-- EMPTY ITINERARY -->
+
+                <section class="empty-itinerary">
+
+                    <span>
+                        🧭
+                    </span>
+
+                    <h2>
+                        No itinerary available
+                    </h2>
+
+                    <p>
+                        Please generate your trip again from the Planner page.
+                    </p>
+
+                    <a href="{{ url_for('planner') }}">
+                        Plan New Trip
+                    </a>
+
+                </section>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             DISCLAIMER
+        ====================================================== -->
+
+        <section class="booking-disclaimer">
+
+            <strong>
+                Important
+            </strong>
+
+            <p>
+                AI-generated schedules, fares and suggestions are planning
+                estimates. Verify railway schedules, live availability,
+                attraction timings, hotel policies and ticket prices before
+                booking.
+            </p>
+
+        </section>
+
+
+        <!-- =====================================================
+             BOTTOM ACTIONS
+        ====================================================== -->
+
+        <div class="bottom-actions">
+
+            <a
+                href="{{ url_for('budget') }}"
+                class="primary-button"
+            >
+                View Budget
+            </a>
+
+
+            <a
+                href="{{ url_for('stays') }}"
+                class="secondary-button"
+            >
+                View Stays
+            </a>
+
+
+            <a
+                href="{{ url_for('result') }}"
+                class="secondary-button"
+            >
+                Trip Overview
+            </a>
+
+
+            <a
+                href="{{ url_for('planner') }}"
+                class="secondary-button"
+            >
+                Plan New Trip
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+{% endblock %}

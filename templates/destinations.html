@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}
+Destinations | AI Travel Planner
+{% endblock %}
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/destinations.css') }}"
+>
+
+{% endblock %}
+
+{% block content %}
+
+<main class="destinations-page">
+
+    <div class="destinations-container">
+
+        <div class="destinations-heading">
+
+            <p class="eyebrow">
+                DISCOVER INDIA
+            </p>
+
+            <h1>
+                Popular Destinations
+            </h1>
+
+            <p>
+                Explore destinations and plan around the budget you have.
+            </p>
+
+        </div>
+
+        <section class="destination-grid">
+
+            {% set destinations = [
+                {
+                    "name": "Goa",
+                    "meta": "Beaches · Nightlife",
+                    "image": "kerala_india.jpg"
+                },
+                {
+                    "name": "Manali",
+                    "meta": "Mountains · Adventure",
+                    "image": "manali_himachal_pradesh_india.jpg"
+                },
+                {
+                    "name": "Jaipur",
+                    "meta": "History · Culture",
+                    "image": "maharashtra_india.jpg"
+                },
+                {
+                    "name": "Kerala",
+                    "meta": "Backwaters · Nature",
+                    "image": "kerala_india.jpg"
+                },
+                {
+                    "name": "Rishikesh",
+                    "meta": "Adventure · Spiritual",
+                    "image": "manali_himachal_pradesh_india.jpg"
+                },
+                {
+                    "name": "Udaipur",
+                    "meta": "Lakes · Heritage",
+                    "image": "maharashtra_india.jpg"
+                },
+                {
+                    "name": "Shimla",
+                    "meta": "Mountains · Nature",
+                    "image": "manali_himachal_pradesh_india.jpg"
+                },
+                {
+                    "name": "Varanasi",
+                    "meta": "Spiritual · Culture",
+                    "image": "pune_maharashtra_india.jpg"
+                }
+            ] %}
+
+            {% for destination in destinations %}
+
+            <article class="destination-card">
+
+                <div class="destination-image">
+
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='generated/' + destination.image
+                        ) }}"
+                        alt="{{ destination.name }}"
+                    >
+
+                    <span>
+                        {{ destination.name }}
+                    </span>
+
+                </div>
+
+                <div class="destination-body">
+
+                    <h3>
+                        {{ destination.name }}
+                    </h3>
+
+                    <p>
+                        {{ destination.meta }}
+                    </p>
+
+                    <a href="{{ url_for('planner') }}">
+                        Plan Trip →
+                    </a>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        </section>
+
+    </div>
+
+</main>
+
+{% endblock %}

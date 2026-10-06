@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Trips | AI Travel Planner
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/trips.css') }}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<main class="trips-page">
+
+    <div class="trips-container">
+
+
+        <div class="trips-heading">
+
+            <div>
+
+                <p class="eyebrow">
+                    YOUR JOURNEYS
+                </p>
+
+                <h1>
+                    My Trips
+                </h1>
+
+                <p>
+                    All your saved travel plans in one place.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{{ url_for('planner') }}"
+                class="trips-new-button"
+            >
+                + Plan New Trip
+            </a>
+
+        </div>
+
+
+
+        {% if trips %}
+
+
+        <section class="trip-grid">
+
+
+            {% for trip in trips %}
+
+            <article class="saved-trip-card">
+
+
+                <div class="saved-trip-image">
+
+                    <span>
+                        {{ trip.destination }}
+                    </span>
+
+                </div>
+
+
+                <div class="saved-trip-body">
+
+                    <h3>
+                        {{ trip.destination }} Trip
+                    </h3>
+
+
+                    <p>
+                        {{ trip.days }}
+                        {{ "Day" if trip.days == 1 else "Days" }}
+
+                        ·
+
+                        {{ trip.persons }}
+                        {{ "Person" if trip.persons == 1 else "Persons" }}
+                    </p>
+
+
+                    <strong>
+                        ₹{{ "{:,.0f}".format(
+                            trip.budget
+                        ) }}
+                    </strong>
+
+
+                    <small>
+                        Travel Date:
+                        {{ trip.travel_date }}
+                    </small>
+
+
+                    <div class="trip-card-actions">
+
+
+                        <a
+                            href="{{ url_for(
+                                'view_trip',
+                                trip_id=trip.id
+                            ) }}"
+                            class="view-trip-button"
+                        >
+                            View Trip
+                        </a>
+
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'delete_trip',
+                                trip_id=trip.id
+                            ) }}"
+                        >
+
+                            <button
+                                type="submit"
+                                class="delete-trip-button"
+                            >
+                                Delete
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+
+        </section>
+
+
+        {% else %}
+
+
+        <div class="empty-trips">
+
+            <div>
+                ✈
+            </div>
+
+            <h2>
+                No saved trips yet
+            </h2>
+
+            <p>
+                Create your first travel plan and it will appear here.
+            </p>
+
+
+            <a
+                href="{{ url_for('planner') }}"
+                class="view-trip-button"
+            >
+                Plan My First Trip
+            </a>
+
+        </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+</main>
+
+{% endblock %}

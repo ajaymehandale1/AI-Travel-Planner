@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}
+Creating Your Trip | AI Travel Planner
+{% endblock %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/processing.css') }}"
+>
+{% endblock %}
+
+
+{% block content %}
+
+<main class="processing-page">
+
+    <section class="processing-card">
+
+        <div class="processing-circle">
+            ✈
+        </div>
+
+
+        <p class="eyebrow">
+            AI TRAVEL PLANNER
+        </p>
+
+
+        <h1>
+            Creating Your Perfect Travel Plan...
+        </h1>
+
+
+        <p class="processing-description">
+            Our AI is analyzing your preferences, budget and destination
+            to create the best plan for you.
+        </p>
+
+
+        <div class="processing-bar">
+
+            <div class="processing-progress"></div>
+
+        </div>
+
+
+        <div class="processing-percent">
+            Planning your trip...
+        </div>
+
+
+        <div class="processing-steps">
+
+            <div class="done">
+                <span>✓</span>
+                Analyzing your preferences
+            </div>
+
+
+            <div class="done">
+                <span>✓</span>
+                Finding best options
+            </div>
+
+
+            <div class="active">
+                <span>•</span>
+                Creating day-wise itinerary
+            </div>
+
+
+            <div>
+                <span>○</span>
+                Calculating budget
+            </div>
+
+        </div>
+
+
+        <div class="processing-note">
+            💡 This may take a few moments. Please do not close the page.
+        </div>
+
+    </section>
+
+</main>
+
+{% endblock %}

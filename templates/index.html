@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}
+AI Travel Planner
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/home.css') }}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<main class="home-page">
+
+
+    <section class="home-hero">
+
+        <div class="home-hero-overlay"></div>
+
+
+        <div class="home-hero-content">
+
+            <span class="home-kicker">
+                SMART TRAVEL PLANNING
+            </span>
+
+
+            <h1>
+
+                Plan Your Dream Trip
+
+                <span>
+                    Within Your Budget
+                </span>
+
+            </h1>
+
+
+            <p>
+
+                Tell us your budget and preferences,
+
+                <br>
+
+                our AI will create the perfect
+
+                <br>
+
+                travel plan for you.
+
+            </p>
+
+
+            <a
+                href="{{ url_for('planner') }}"
+                class="home-primary-button"
+            >
+
+                Plan My Trip
+
+                <span>→</span>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+
+    <section class="home-features">
+
+        <article class="home-feature-card">
+
+            <div class="home-feature-icon">
+                ⚙
+            </div>
+
+            <div>
+
+                <h3>
+                    AI Powered
+                </h3>
+
+                <p>
+                    Smart Recommendations
+                </p>
+
+            </div>
+
+        </article>
+
+
+        <article class="home-feature-card">
+
+            <div class="home-feature-icon">
+                ♧
+            </div>
+
+            <div>
+
+                <h3>
+                    Budget Friendly
+                </h3>
+
+                <p>
+                    Best options within budget
+                </p>
+
+            </div>
+
+        </article>
+
+
+        <article class="home-feature-card">
+
+            <div class="home-feature-icon">
+                ♙
+            </div>
+
+            <div>
+
+                <h3>
+                    Personalized
+                </h3>
+
+                <p>
+                    Plans for your style
+                </p>
+
+            </div>
+
+        </article>
+
+
+        <article class="home-feature-card">
+
+            <div class="home-feature-icon">
+                ◷
+            </div>
+
+            <div>
+
+                <h3>
+                    Time Saving
+                </h3>
+
+                <p>
+                    Quick &amp; Easy Planning
+                </p>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+</main>
+
+{% endblock %}

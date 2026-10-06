@@ -3,3 +3,5 @@ Flask-SQLAlchemy
 Werkzeug
 python-dotenv
 groq
+requests
+gunicorn
